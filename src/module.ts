@@ -22,7 +22,7 @@ import type { IServiceProvider, ServiceType } from "./service_provider";
 import type { IServiceProviderBuilder } from "./service_provider_builder";
 
 export {
-    module,
+    module as default,
     ServiceOrchestrator,
     type IServiceProvider,
     type IServiceProviderBuilder,
