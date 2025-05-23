@@ -1,0 +1,9 @@
+{
+  "name": "dependency-injection.bs.js",
+  "configKey": "dependency-injection.bs.js",
+  "version": "0.0.2",
+  "builder": {
+    "@nuxt/module-builder": "0.8.4",
+    "unbuild": "2.0.0"
+  }
+}
