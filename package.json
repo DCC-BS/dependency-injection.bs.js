@@ -16,9 +16,7 @@
     },
     "main": "./dist/module.cjs",
     "types": "./dist/types.d.ts",
-    "files": [
-        "dist"
-    ],
+    "files": ["dist"],
     "scripts": {
         "prepack": "nuxt-module-build build",
         "generate": "nuxi generate",
