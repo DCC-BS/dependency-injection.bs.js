@@ -1,0 +1,14 @@
+.github
+.nuxt
+.output
+.vscode
+node_modules
+playground
+src
+test
+editorconfig
+.gitignore
+.npmignore
+bun.lock
+eslint.config.mjs
+README.md
