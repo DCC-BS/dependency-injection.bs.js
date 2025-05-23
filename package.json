@@ -1,6 +1,6 @@
 {
     "name": "@dcc-bs/dependency-injection.bs.js",
-    "description": "TODO: description",
+    "description": "A lightweight, type-safe dependency injection system for JavaScript/TypeScript applications, with built-in support for Nuxt.js.",
     "license": "MIT",
     "type": "module",
     "publishConfig": {
@@ -15,9 +15,7 @@
     },
     "main": "./dist/module.cjs",
     "types": "./dist/types.d.ts",
-    "files": [
-        "dist"
-    ],
+    "files": ["dist"],
     "scripts": {
         "prepack": "nuxt-module-build build",
         "generate": "nuxi generate",

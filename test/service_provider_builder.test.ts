@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { ServiceProviderBuilder } from "../src/service_provider_builder";
 
 // filepath: src/service_dependency_builder.test.ts

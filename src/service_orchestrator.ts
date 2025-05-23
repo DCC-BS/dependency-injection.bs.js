@@ -1,8 +1,8 @@
+import type { IServiceProvider } from "./service_provider";
 import {
     type IServiceProviderBuilder,
     ServiceProviderBuilder,
 } from "./service_provider_builder";
-import type { IServiceProvider } from "./service_provider";
 
 type ServiceProviderFactory = (builder: IServiceProviderBuilder) => void;
 

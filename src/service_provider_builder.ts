@@ -4,8 +4,8 @@
  */
 
 import {
-    ServiceProvider,
     type IServiceProvider,
+    ServiceProvider,
     type ServiceType,
 } from "./service_provider";
 
