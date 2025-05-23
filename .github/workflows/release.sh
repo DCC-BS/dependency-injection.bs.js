@@ -33,10 +33,6 @@ cp -r "$TEMP_DIR"/* .
 # Clean up the temporary directory
 rm -rf "$TEMP_DIR"
 
-# Commit and push the changes
-git config --global user.name "github-actions[bot]"
-git config --global user.email "github-actions[bot]@user.noreply.github.com"
-
 git add .
 git commit -m "Release v$NEXT_VERSION"
 git tag -a "v$NEXT_VERSION" -m "Release v$NEXT_VERSION"
