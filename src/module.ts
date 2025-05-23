@@ -1,6 +1,6 @@
 import { addImportsDir, createResolver, defineNuxtModule } from "@nuxt/kit";
 
-const module = defineNuxtModule({
+export default defineNuxtModule({
     meta: {
         name: "dependency-injection.bs.js",
         configKey: "dependency-injection.bs.js",
@@ -14,16 +14,6 @@ const module = defineNuxtModule({
 
         // examples:
         addImportsDir(resolver.resolve("./runtime/composables"));
+        addImportsDir(resolver.resolve("./runtime/services"));
     },
 });
-
-import { ServiceOrchestrator } from "./service_orchestrator";
-import type { IServiceProvider, ServiceType } from "./service_provider";
-import type { IServiceProviderBuilder } from "./service_provider_builder";
-
-export {
-    module as default,
-    ServiceOrchestrator,
-    type IServiceProvider,
-    type IServiceProviderBuilder,
-};

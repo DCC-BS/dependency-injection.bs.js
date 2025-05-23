@@ -1,6 +1,6 @@
 import { useNuxtApp } from "nuxt/app";
-import type { ServiceOrchestrator } from "../service_orchestrator";
-import type { ServiceType } from "../service_provider";
+import type { ServiceOrchestrator } from "../services/service_orchestrator";
+import type { ServiceType } from "../services/service_provider";
 
 export function useService<T>(target: ServiceType<T>): T {
     const nuxtApp = useNuxtApp();
