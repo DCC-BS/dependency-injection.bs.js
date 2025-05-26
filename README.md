@@ -49,7 +49,8 @@ import { ServiceProviderBuilder } from '@dcc-bs/dependency-injection.bs.js';
 
 // Define your services with injection keys
 class DatabaseService {
-  static $injectKey = 'databaseService';
+  static $injectKey = 'DatabaseService';
+  static $inject = []; // No dependencies
   
   connect() {
     console.log('Database connected');
@@ -57,7 +58,8 @@ class DatabaseService {
 }
 
 class UserRepository {
-  static $injectKey = 'userRepository';
+  static $injectKey = 'UserRepository';
+  static $inject = [DatabaseService.$injectKey]; // This service depends on DatabaseService
   
   // to get services injected, the name of the constructor parameter need to macht the injectKey
   constructor(private readonly databaseService: DatabaseService) {}
@@ -70,7 +72,8 @@ class UserRepository {
 }
 
 class UserService {
-  static $injectKey = 'userService';
+  static $injectKey = 'UserService';
+  static $inject = ["UserRepository"]; // you can also simply provide the inject key as a string
   
   constructor(private readonly userRepository: UserRepository) {}
   
