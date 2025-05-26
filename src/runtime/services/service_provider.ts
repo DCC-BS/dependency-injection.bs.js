@@ -1,13 +1,12 @@
 export interface ServiceType<T> {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     new (...args: any[]): T;
-
     $injectKey: string;
+    $inject: string[];
 }
 
 export interface IServiceProvider {
     resolve<T>(target: ServiceType<T>): T;
-
     resolveNamed<T>(key: string): T;
 }
 

@@ -6,6 +6,7 @@ import { ServiceProviderBuilder } from "../src/runtime/services/service_provider
 // Mock service types for testing
 class ServiceA {
     static $injectKey = "serviceA";
+    static $inject: string[] = [];
 
     // biome-ignore lint/complexity/noUselessConstructor: <explanation>
     constructor() {}
@@ -13,17 +14,23 @@ class ServiceA {
 
 class ServiceB {
     static $injectKey = "serviceB";
+    static $inject = [ServiceA.$injectKey];
+
     constructor(private readonly serviceA: ServiceA) {}
 }
 
 class ServiceC {
     static $injectKey = "serviceC";
+    static $inject = [ServiceB.$injectKey];
+
     constructor(private readonly serviceB: ServiceB) {}
 }
 
 // Service with multiple dependencies
 class ServiceD {
     static $injectKey = "serviceD";
+    static $inject = [ServiceA.$injectKey, ServiceB.$injectKey];
+
     constructor(
         private readonly serviceA: ServiceA,
         private readonly serviceB: ServiceB,
@@ -33,16 +40,22 @@ class ServiceD {
 // Services for circular dependency testing
 class ServiceX {
     static $injectKey = "serviceX";
+    static $inject = ["serviceY"];
+
     constructor(private readonly serviceY: ServiceY) {}
 }
 
 class ServiceY {
     static $injectKey = "serviceY";
+    static $inject = ["serviceZ"];
+    
     constructor(private readonly serviceZ: ServiceZ) {}
 }
 
 class ServiceZ {
     static $injectKey = "serviceZ";
+    static $inject = ["serviceX"];
+
     constructor(private readonly serviceX: ServiceX) {}
 }
 

@@ -65,6 +65,10 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
      */
     private instances = new Map<string, unknown>();
 
+    public get registerdKeys(): string[] {
+        return Array.from(this.dependencyGraph.keys());
+    }
+
     /**
      * Register a service instance directly
      * This service is considered to have no dependencies
@@ -334,18 +338,20 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
  * @returns Array of parameter names
  */
 function getParamNames<T>(fn: ServiceType<T>): string[] {
-    const str = fn.toString();
-    const params = str.match(/constructor\s*\(([^)]*)\)/)?.[1] || "";
-    return params
-        .split(",")
-        .map((p) => p.trim())
-        .filter(Boolean)
-        .map((p) => {
-            // Extract parameter name from TypeScript parameter declaration
-            // Ex: "private readonly db: ComplaintsDB" -> "ComplaintsDB"
-            const match = p.match(
-                /(?:private|public|protected)?\s*(?:readonly)?\s*(\w+)\s*:\s*(\w+)/,
-            );
-            return match ? match[2] : p;
-        });
+    return fn.$inject;
+    // const str = fn.toString();
+
+    // const params = str.match(/constructor\s*\(([^)]*)\)/)?.[1] || "";
+    // return params
+    //     .split(",")
+    //     .map((p) => p.trim())
+    //     .filter(Boolean)
+    //     .map((p) => {
+    //         // Extract parameter name from TypeScript parameter declaration
+    //         // Ex: "private readonly db: ComplaintsDB" -> "ComplaintsDB"
+    //         const match = p.match(
+    //             /(?:private|public|protected)?\s*(?:readonly)?\s*(\w+)\s*:\s*(\w+)/,
+    //         );
+    //         return match ? match[2] : p;
+    //     });
 }
