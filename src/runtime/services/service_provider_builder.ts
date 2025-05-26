@@ -47,6 +47,32 @@ export interface IServiceProviderBuilder {
      */
     register<T>(target: ServiceType<T>): void;
 
+    /**
+     * Register a factory function that builds a service instance
+     * @param factory The factory function to create the service
+     * @param inject Dependencies required by the factory
+     * @param key Unique key for the service
+     */
+    registerFactory<T>(
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        factory: (...args: any[]) => T,
+        inject: (string | ServiceType<unknown>)[],
+        key: string,
+    ): void;
+
+    /**
+     * Register an asynchronous factory function that builds a service instance
+     * @param factory The factory function to create the service
+     * @param inject Dependencies required by the factory
+     * @param key Unique key for the service
+     * */
+    registerAsyncFactory<T>(
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        factory: (...args: any[]) => Promise<T>,
+        inject: (string | ServiceType<unknown>)[],
+        key: string,
+    ): void;
+
     build(): IServiceProvider;
 }
 
@@ -134,6 +160,78 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
         const node: DependencyNode<T> = {
             serviceType: target,
             dependencies,
+            isRegistered: false,
+        };
+
+        // Add to dependency graph
+        this.dependencyGraph.set(key, node);
+    }
+
+    public registerFactory<T>(
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        factory: (...args: any[]) => T,
+        inject: (string | ServiceType<unknown>)[],
+        key: string,
+    ): void {
+        // Check if already registered
+        if (this.dependencyGraph.has(key)) {
+            throw new Error(`Service ${key} already registered`);
+        }
+
+        const factoryClass = class {
+            static $injectKey = key;
+            static $inject = inject;
+
+            args: unknown[];
+
+            constructor(...args: unknown[]) {
+                this.args = args;
+            }
+
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            build(...args: any[]): T {
+                return factory(...[...this.args, ...args]);
+            }
+        };
+
+        // Create a dependency node for the factory
+        const node: DependencyNode<unknown> = {
+            serviceType: factoryClass,
+            dependencies: getInjectKeys(inject),
+            isRegistered: false,
+        };
+
+        // Add to dependency graph
+        this.dependencyGraph.set(key, node);
+    }
+
+    public registerAsyncFactory<T>(
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        factory: (...args: any[]) => Promise<T>,
+        inject: (string | ServiceType<unknown>)[],
+        key: string,
+    ): void {
+        // Check if already registered
+        if (this.dependencyGraph.has(key)) {
+            throw new Error(`Service ${key} already registered`);
+        }
+        const factoryClass = class {
+            static $injectKey = key;
+            static $inject = inject;
+            args: unknown[];
+            constructor(...args: unknown[]) {
+                this.args = args;
+            }
+
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            async build(...args: any[]): Promise<T> {
+                return factory(...[this.args, ...args]);
+            }
+        };
+        // Create a dependency node for the factory
+        const node: DependencyNode<unknown> = {
+            serviceType: factoryClass,
+            dependencies: getInjectKeys(inject),
             isRegistered: false,
         };
 
@@ -338,20 +436,15 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
  * @returns Array of parameter names
  */
 function getParamNames<T>(fn: ServiceType<T>): string[] {
-    return fn.$inject;
-    // const str = fn.toString();
+    return getInjectKeys(fn.$inject ?? []);
+}
 
-    // const params = str.match(/constructor\s*\(([^)]*)\)/)?.[1] || "";
-    // return params
-    //     .split(",")
-    //     .map((p) => p.trim())
-    //     .filter(Boolean)
-    //     .map((p) => {
-    //         // Extract parameter name from TypeScript parameter declaration
-    //         // Ex: "private readonly db: ComplaintsDB" -> "ComplaintsDB"
-    //         const match = p.match(
-    //             /(?:private|public|protected)?\s*(?:readonly)?\s*(\w+)\s*:\s*(\w+)/,
-    //         );
-    //         return match ? match[2] : p;
-    //     });
+function getInjectKeys(inject: (string | ServiceType<unknown>)[]): string[] {
+    return inject.map((p) => {
+        if (typeof p === "string") {
+            return p;
+        }
+
+        return p.$injectKey;
+    });
 }

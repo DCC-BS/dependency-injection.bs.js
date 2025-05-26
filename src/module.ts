@@ -1,6 +1,5 @@
 import {
     addImportsDir,
-    addTypeTemplate,
     createResolver,
     defineNuxtModule,
 } from "@nuxt/kit";
