@@ -1,6 +1,7 @@
 import { useNuxtApp } from "nuxt/app";
 import type { ServiceOrchestrator } from "../services/service_orchestrator";
 import type { ServiceType } from "../services/service_provider";
+import type { InjectKey } from "../helpers/helpers";
 
 export function useService<T>(target: ServiceType<T>): T {
     const nuxtApp = useNuxtApp();
@@ -12,7 +13,7 @@ export function useService<T>(target: ServiceType<T>): T {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export function createService<T>(target: string, ...args: any[]): T {
+export function createService<T>(target: InjectKey<T>, ...args: any[]): T {
     const nuxtApp = useNuxtApp();
     const serviceOrchestrator =
         nuxtApp.$serviceOrchestrator as ServiceOrchestrator;
@@ -22,7 +23,7 @@ export function createService<T>(target: string, ...args: any[]): T {
 }
 
 export async function createServiceAsync<T>(
-    target: string,
+    target: InjectKey<T>,
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     ...args: any[]
 ): Promise<T> {

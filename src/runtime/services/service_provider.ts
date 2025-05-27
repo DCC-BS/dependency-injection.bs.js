@@ -1,3 +1,5 @@
+import { getKeyName, type InjectKey } from "../helpers/helpers";
+
 export interface ServiceType<T> {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     new (...args: any[]): T;
@@ -10,10 +12,10 @@ export interface IServiceProvider {
     resolveNamed<T>(key: string): T;
 
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    resolveFactory<T>(target: string, ...args: any): T;
+    resolveFactory<T>(target: InjectKey<T>, ...args: any): T;
 
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    resolveFactoryAsync<T>(target: string, ...args: any): Promise<T>;
+    resolveFactoryAsync<T>(target: InjectKey<T>, ...args: any): Promise<T>;
 }
 
 interface ServiceFactory<T> {
@@ -37,14 +39,19 @@ export class ServiceProvider
     }
 
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    public resolveFactory<T>(target: string, ...args: any[]): T {
-        const instance = this.get(target) as ServiceFactory<T>;
+    public resolveFactory<T>(target: InjectKey<T>, ...args: any[]): T {
+        const instance = this.get(getKeyName(target)) as ServiceFactory<T>;
         return instance.build(args);
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    public resolveFactoryAsync<T>(target: string, ...args: any[]): Promise<T> {
-        const instance = this.get(target) as ServiceFactory<Promise<T>>;
+    public resolveFactoryAsync<T>(
+        target: InjectKey<T>,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        ...args: any[]
+    ): Promise<T> {
+        const instance = this.get(getKeyName(target)) as ServiceFactory<
+            Promise<T>
+        >;
         if (!instance) {
             throw new Error(`Service factory ${target} not registered`);
         }
