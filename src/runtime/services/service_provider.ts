@@ -1,69 +1,40 @@
 import { getKeyName, type InjectKey } from "../helpers/helpers";
+import type { IServiceFactory } from "./service_factory";
 
 export interface ServiceType<T> {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     new (...args: any[]): T;
     $injectKey: string;
     $inject: (string | ServiceType<unknown>)[];
 }
 
 export interface IServiceProvider {
-    resolve<T>(target: ServiceType<T>): T;
-    resolveNamed<T>(key: string): T;
-
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    resolveFactory<T>(target: InjectKey<T>, ...args: any): T;
-
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    resolveFactoryAsync<T>(target: InjectKey<T>, ...args: any): Promise<T>;
-}
-
-interface ServiceFactory<T> {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    build: (...args: any[]) => T;
+    resolve<T>(target: InjectKey<T>, ...args: any[]): T;
+    resolveAsync<T>(target: InjectKey<T>, ...args: any[]): Promise<T>;
 }
 
 export class ServiceProvider
-    extends Map<string, unknown>
+    extends Map<string, IServiceFactory<unknown>>
     implements IServiceProvider
 {
-    public resolve<T>(target: ServiceType<T>): T {
-        const key = target.$injectKey;
+    public resolve<T>(target: InjectKey<T>, ...args: any[]): T {
+        const key = getKeyName(target);
 
-        const instance = this.get(key);
-        if (!instance) {
+        const factory = this.get(key) as IServiceFactory<T>;
+        if (!factory) {
             throw new Error(`Service ${key} not registered`);
         }
 
-        return instance as T;
+        return factory.build(args);
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    public resolveFactory<T>(target: InjectKey<T>, ...args: any[]): T {
-        const instance = this.get(getKeyName(target)) as ServiceFactory<T>;
-        return instance.build(args);
-    }
+    public resolveAsync<T>(target: InjectKey<T>, ...args: any[]): Promise<T> {
+        const key = getKeyName(target);
 
-    public resolveFactoryAsync<T>(
-        target: InjectKey<T>,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        ...args: any[]
-    ): Promise<T> {
-        const instance = this.get(getKeyName(target)) as ServiceFactory<
-            Promise<T>
-        >;
-        if (!instance) {
-            throw new Error(`Service factory ${target} not registered`);
-        }
-
-        return instance.build(args);
-    }
-
-    public resolveNamed<T>(key: string): T {
-        const instance = this.get(key);
-        if (!instance) {
+        const factory = this.get(key) as IServiceFactory<Promise<T>>;
+        if (!factory) {
             throw new Error(`Service ${key} not registered`);
         }
-        return instance as T;
+
+        return factory.build(args);
     }
 }

@@ -48,7 +48,7 @@ class ServiceX {
 class ServiceY {
     static $injectKey = "serviceY";
     static $inject = ["serviceZ"];
-    
+
     constructor(private readonly serviceZ: ServiceZ) {}
 }
 
@@ -90,17 +90,17 @@ describe("ServiceProviderBuilder", () => {
     describe("registerNamedInstance", () => {
         it("should register a named instance", () => {
             const customService = { name: "CustomService" };
-            builder.registerNamedInstance("CustomKey", customService);
+            builder.registerInstance("CustomKey", customService);
 
             const provider = builder.build();
-            expect(provider.resolveNamed("CustomKey")).toBe(customService);
+            expect(provider.resolve("CustomKey")).toBe(customService);
         });
 
         it("should throw error when registering with duplicate name", () => {
-            builder.registerNamedInstance("CustomKey", { name: "service1" });
+            builder.registerInstance("CustomKey", { name: "service1" });
 
             expect(() => {
-                builder.registerNamedInstance("CustomKey", {
+                builder.registerInstance("CustomKey", {
                     name: "service2",
                 });
             }).toThrow("Service CustomKey already registered");
@@ -142,8 +142,8 @@ describe("ServiceProviderBuilder", () => {
 
             const provider = builder.build();
 
-            const serviceB = provider.resolveNamed("serviceB");
-            const serviceC = provider.resolveNamed("serviceC");
+            const serviceB = provider.resolve("serviceB");
+            const serviceC = provider.resolve("serviceC");
 
             expect(serviceB).toBeInstanceOf(ServiceB);
             expect(serviceC).toBeInstanceOf(ServiceC);
@@ -177,9 +177,147 @@ describe("ServiceProviderBuilder", () => {
             builder.register(ServiceD);
 
             const provider = builder.build();
-            const serviceD = provider.resolveNamed("serviceD");
+            const serviceD = provider.resolve("serviceD");
 
             expect(serviceD).toBeInstanceOf(ServiceD);
+        });
+    });
+
+    describe("registerFactory", () => {
+        it("should register a factory function", () => {
+            const serviceA = new ServiceA();
+            builder.registerInstance(ServiceA, serviceA);
+
+            const factoryKey = "factoryService";
+            builder.registerFactory(
+                (serviceA: ServiceA) => {
+                    return { value: "created by factory", serviceA };
+                },
+                [ServiceA],
+                factoryKey,
+            );
+
+            // Verify it's registered in the dependency graph
+            const graph = builder.getDependencyGraph();
+            expect(graph).toHaveProperty(factoryKey);
+            expect(graph[factoryKey]).toEqual(["serviceA"]);
+
+            // Build and verify the service is properly created
+            const provider = builder.build();
+            const factoryService = provider.resolve(factoryKey);
+
+            expect(factoryService).toHaveProperty(
+                "value",
+                "created by factory",
+            );
+            expect(factoryService).toHaveProperty("serviceA", serviceA);
+        });
+
+        it("should throw error when registering a factory with duplicate key", () => {
+            builder.registerFactory(
+                () => ({ value: "first factory" }),
+                [],
+                "duplicateFactory",
+            );
+
+            expect(() => {
+                builder.registerFactory(
+                    () => ({ value: "second factory" }),
+                    [],
+                    "duplicateFactory",
+                );
+            }).toThrow("Service duplicateFactory already registered");
+        });
+
+        it("should properly inject dependencies into factory", () => {
+            builder.register(ServiceA);
+            builder.register(ServiceB);
+
+            builder.registerFactory(
+                (serviceA: ServiceA, serviceB: ServiceB) => {
+                    return { serviceA, serviceB };
+                },
+                [ServiceA.$injectKey, ServiceB.$injectKey],
+                "factoryWithMultipleDeps",
+            );
+
+            const provider = builder.build();
+            const service = provider.resolve("factoryWithMultipleDeps") as {
+                serviceA: ServiceA;
+                serviceB: ServiceB;
+            };
+
+            expect(service.serviceA).toBeInstanceOf(ServiceA);
+            expect(service.serviceB).toBeInstanceOf(ServiceB);
+        });
+    });
+
+    describe("registerAsyncFactory", () => {
+        it("should register an async factory function", async () => {
+            const serviceA = new ServiceA();
+            builder.registerInstance(ServiceA, serviceA);
+
+            const asyncFactoryKey = "asyncFactoryService";
+            builder.registerAsyncFactory(
+                async (serviceA: ServiceA) => {
+                    // Simulate async operation
+                    return { value: "created by async factory", serviceA };
+                },
+                [ServiceA.$injectKey],
+                asyncFactoryKey,
+            );
+
+            // Verify it's registered in the dependency graph
+            const graph = builder.getDependencyGraph();
+            expect(graph).toHaveProperty(asyncFactoryKey);
+            expect(graph[asyncFactoryKey]).toEqual(["serviceA"]);
+
+            // Build and verify the service is properly created
+            const provider = builder.build();
+            const asyncFactoryService = await provider.resolve(asyncFactoryKey);
+
+            expect(asyncFactoryService).toHaveProperty(
+                "value",
+                "created by async factory",
+            );
+            expect(asyncFactoryService).toHaveProperty("serviceA", serviceA);
+        });
+
+        it("should throw error when registering an async factory with duplicate key", () => {
+            builder.registerAsyncFactory(
+                async () => ({ value: "first async factory" }),
+                [],
+                "duplicateAsyncFactory",
+            );
+
+            expect(() => {
+                builder.registerAsyncFactory(
+                    async () => ({ value: "second async factory" }),
+                    [],
+                    "duplicateAsyncFactory",
+                );
+            }).toThrow("Service duplicateAsyncFactory already registered");
+        });
+
+        it("should properly inject dependencies into async factory", async () => {
+            builder.register(ServiceA);
+            builder.register(ServiceB);
+
+            builder.registerAsyncFactory(
+                async (serviceA: ServiceA, serviceB: ServiceB) => {
+                    return { serviceA, serviceB };
+                },
+                [ServiceA.$injectKey, ServiceB.$injectKey],
+                "asyncFactoryWithMultipleDeps",
+            );
+
+            const provider = builder.build();
+            const service = (await provider.resolve(
+                "asyncFactoryWithMultipleDeps",
+            )) as { serviceA: ServiceA; serviceB: ServiceB };
+
+            expect(service.serviceA).toBeInstanceOf(ServiceA);
+            expect(service.serviceB).toBeInstanceOf(ServiceB);
         });
     });
 

@@ -2,46 +2,20 @@
  * Class for building and validating service dependency graphs
  * Handles registration of services and their dependencies
  */
-
 import { getKeyName, type InjectKey } from "../helpers/helpers";
+import type { DependencyNode, ServiceLifetime } from "./dependency_node";
+import { ServiceFactory } from "./service_factory";
 import {
     type IServiceProvider,
     ServiceProvider,
     type ServiceType,
 } from "./service_provider";
 
-/**
- * Represents a node in the dependency graph
- */
-interface DependencyNode<T> {
-    /**
-     * The service type that this node represents
-     */
-    serviceType?: ServiceType<T>;
-
-    /**
-     * Names of dependencies required by this service
-     */
-    dependencies: string[];
-
-    /**
-     * Whether the service has been instantiated and registered
-     */
-    isRegistered: boolean;
-
-    /**
-     * The actual instance of the service (if registered)
-     */
-    instance?: T;
-}
-
 export interface IServiceProviderBuilder {
     /**
      * Register an instance of a service with no dependencies
      */
-    registerInstance<T>(target: ServiceType<T>, instance: T): void;
-
-    registerNamedInstance<T>(name: string, instance: T): void;
+    registerInstance<T>(target: InjectKey<T>, instance: T): void;
 
     /**
      * Register a service type that will be instantiated later during building
@@ -55,7 +29,6 @@ export interface IServiceProviderBuilder {
      * @param key Unique key for the service
      */
     registerFactory<T>(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => T,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
@@ -68,7 +41,6 @@ export interface IServiceProviderBuilder {
      * @param key Unique key for the service
      * */
     registerAsyncFactory<T>(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => Promise<T>,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
@@ -102,8 +74,12 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
      * @param target The service type to register
      * @param instance The instance of the service
      */
-    public registerInstance<T>(target: ServiceType<T>, instance: T): void {
-        const key = target.$injectKey;
+    public registerInstance<T>(
+        target: InjectKey<T>,
+        instance: T,
+        lifetime: ServiceLifetime = "singleton",
+    ): void {
+        const key = getKeyName(target);
 
         // Check if already registered
         if (this.instances.has(key)) {
@@ -112,10 +88,11 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
 
         // Create a dependency node without dependencies
         const node: DependencyNode<T> = {
-            serviceType: target,
             dependencies: [],
-            isRegistered: true,
+            isRegistered: false,
+            isFactory: false,
             instance,
+            lifetime,
         };
 
         // Store in both maps
@@ -123,30 +100,15 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
         this.instances.set(key, instance);
     }
 
-    public registerNamedInstance<T>(name: string, instance: T): void {
-        // Check if already registered
-        if (this.instances.has(name)) {
-            throw new Error(`Service ${name} already registered`);
-        }
-
-        // Create a dependency node without dependencies
-        const node: DependencyNode<T> = {
-            dependencies: [],
-            isRegistered: true,
-            instance,
-        };
-
-        // Store in both maps
-        this.dependencyGraph.set(name, node);
-        this.instances.set(name, instance);
-    }
-
     /**
      * Register a service type for later instantiation
      * This extracts dependencies from constructor parameters
      * @param target The service type to register
      */
-    public register<T>(target: ServiceType<T>): void {
+    public register<T>(
+        target: ServiceType<T>,
+        lifetime: ServiceLifetime = "singleton",
+    ): void {
         const key = target.$injectKey;
 
         // Check if already registered
@@ -162,6 +124,8 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             serviceType: target,
             dependencies,
             isRegistered: false,
+            isFactory: false,
+            lifetime,
         };
 
         // Add to dependency graph
@@ -169,10 +133,10 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
     }
 
     public registerFactory<T>(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => T,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
+        lifetime: ServiceLifetime = "singleton",
     ): void {
         const keyName = getKeyName(key);
 
@@ -191,7 +155,6 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
                 this.args = args;
             }
 
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             build(...args: any[]): T {
                 return factory(...[...this.args, ...args]);
             }
@@ -202,6 +165,8 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             serviceType: factoryClass,
             dependencies: getInjectKeys(inject),
             isRegistered: false,
+            isFactory: true,
+            lifetime: lifetime,
         };
 
         // Add to dependency graph
@@ -209,10 +174,10 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
     }
 
     public registerAsyncFactory<T>(
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => Promise<T>,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
+        lifetime: ServiceLifetime = "singleton",
     ): void {
         const keyName = getKeyName(key);
 
@@ -228,7 +193,6 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
                 this.args = args;
             }
 
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             async build(...args: any[]): Promise<T> {
                 return factory(...[...this.args, ...args]);
             }
@@ -238,6 +202,8 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             serviceType: factoryClass,
             dependencies: getInjectKeys(inject),
             isRegistered: false,
+            isFactory: true,
+            lifetime,
         };
 
         // Add to dependency graph
@@ -276,11 +242,6 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
         // Build all unregistered services in dependency order
         const provider = new ServiceProvider();
 
-        // First add all already registered instances
-        for (const [key, instance] of this.instances.entries()) {
-            provider.set(key, instance);
-        }
-
         // Then instantiate remaining services in correct dependency order
         for (const serviceKey of sortedServices) {
             const node = this.dependencyGraph.get(serviceKey);
@@ -295,30 +256,30 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             }
 
             // Resolve dependencies
-            const dependencies =
-                node?.dependencies.map((dep) => {
-                    const instance = provider.get(dep);
-                    if (!instance) {
-                        throw new Error(
-                            `Failed to resolve dependency ${dep} for service ${serviceKey}`,
-                        );
-                    }
-                    return instance;
-                }) || [];
+            const dependencies = node?.dependencies.map((dep) => {
+                const factory = provider.get(dep);
+
+                if (!factory) {
+                    throw new Error(
+                        `Failed to resolve dependency ${dep} for service ${serviceKey}`,
+                    );
+                }
+
+                return factory;
+            });
 
             // Create instance
-            if (!node.serviceType) {
+            if (!node.instance && !node.serviceType) {
                 throw new Error(
                     `Service type not found for service ${serviceKey}`,
                 );
             }
 
-            const instance = new node.serviceType(...dependencies);
+            const factory = new ServiceFactory(serviceKey, node, dependencies);
 
             // Register instance
             node.isRegistered = true;
-            node.instance = instance;
-            provider.set(serviceKey, instance);
+            provider.set(serviceKey, factory);
         }
 
         return provider;

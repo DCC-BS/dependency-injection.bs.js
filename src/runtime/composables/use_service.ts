@@ -19,7 +19,7 @@ export function createService<T>(target: InjectKey<T>, ...args: any[]): T {
         nuxtApp.$serviceOrchestrator as ServiceOrchestrator;
     const serviceProvider = serviceOrchestrator.getProvider();
 
-    return serviceProvider.resolveFactory(target, args);
+    return serviceProvider.resolveFromFactory(target, args);
 }
 
 export async function createServiceAsync<T>(
@@ -32,5 +32,5 @@ export async function createServiceAsync<T>(
         nuxtApp.$serviceOrchestrator as ServiceOrchestrator;
     const serviceProvider = serviceOrchestrator.getProvider();
 
-    return serviceProvider.resolveFactoryAsync(target, args);
+    return serviceProvider.resolveFromFactoryAsync(target, args);
 }
