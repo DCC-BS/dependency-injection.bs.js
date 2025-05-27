@@ -230,7 +230,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
 
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             async build(...args: any[]): Promise<T> {
-                return factory(...[this.args, ...args]);
+                return factory(...[...this.args, ...args]);
             }
         };
         // Create a dependency node for the factory
