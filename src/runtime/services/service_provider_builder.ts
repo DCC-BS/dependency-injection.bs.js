@@ -3,6 +3,7 @@
  * Handles registration of services and their dependencies
  */
 
+import { getKeyName, type InjectKey } from "../helpers/helpers";
 import {
     type IServiceProvider,
     ServiceProvider,
@@ -56,8 +57,8 @@ export interface IServiceProviderBuilder {
     registerFactory<T>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => T,
-        inject: (string | ServiceType<unknown>)[],
-        key: string,
+        inject: InjectKey<unknown>[],
+        key: InjectKey<T>,
     ): void;
 
     /**
@@ -69,8 +70,8 @@ export interface IServiceProviderBuilder {
     registerAsyncFactory<T>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => Promise<T>,
-        inject: (string | ServiceType<unknown>)[],
-        key: string,
+        inject: InjectKey<unknown>[],
+        key: InjectKey<T>,
     ): void;
 
     build(): IServiceProvider;
@@ -170,16 +171,18 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
     public registerFactory<T>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => T,
-        inject: (string | ServiceType<unknown>)[],
-        key: string,
+        inject: InjectKey<unknown>[],
+        key: InjectKey<T>,
     ): void {
+        const keyName = getKeyName(key);
+
         // Check if already registered
-        if (this.dependencyGraph.has(key)) {
-            throw new Error(`Service ${key} already registered`);
+        if (this.dependencyGraph.has(keyName)) {
+            throw new Error(`Service ${keyName} already registered`);
         }
 
         const factoryClass = class {
-            static $injectKey = key;
+            static $injectKey = keyName;
             static $inject = inject;
 
             args: unknown[];
@@ -202,21 +205,23 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
         };
 
         // Add to dependency graph
-        this.dependencyGraph.set(key, node);
+        this.dependencyGraph.set(keyName, node);
     }
 
     public registerAsyncFactory<T>(
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         factory: (...args: any[]) => Promise<T>,
-        inject: (string | ServiceType<unknown>)[],
-        key: string,
+        inject: InjectKey<unknown>[],
+        key: InjectKey<T>,
     ): void {
+        const keyName = getKeyName(key);
+
         // Check if already registered
-        if (this.dependencyGraph.has(key)) {
+        if (this.dependencyGraph.has(keyName)) {
             throw new Error(`Service ${key} already registered`);
         }
         const factoryClass = class {
-            static $injectKey = key;
+            static $injectKey = keyName;
             static $inject = inject;
             args: unknown[];
             constructor(...args: unknown[]) {
@@ -236,7 +241,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
         };
 
         // Add to dependency graph
-        this.dependencyGraph.set(key, node);
+        this.dependencyGraph.set(keyName, node);
     }
 
     /**

@@ -8,9 +8,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     orchestrator.setup(async (builder) => {
         builder.register(ServiceA);
 
+        
         builder.registerAsyncFactory(async (serviceA: ServiceA, appConfig: AppConfig) => {
             return await getServiceB(serviceA, appConfig);
-        }, [ServiceA], "ServiceBFactory");
+        }, [ServiceA], ServiceB);
 
         // builder.register(ServiceC);
     });
