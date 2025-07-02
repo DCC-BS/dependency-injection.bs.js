@@ -106,7 +106,7 @@ const db = new DatabaseService();
 builder.registerInstance(DatabaseService, db);
 
 // Register a named instance
-builder.registerNamedInstance('config', { apiUrl: 'https://api.example.com' });
+builder.registerInstance('config', { apiUrl: 'https://api.example.com' });
 ```
 
 ### Using with Nuxt.js
@@ -136,8 +136,8 @@ export default defineNuxtPlugin((nuxtApp) => {
         const logger = useLogger();
         const { t } = useI18n(); // this needs to be created in the setup context
 
-        builder.registerNamedInstance("translate", t);
-        builder.registerNamedInstance("logger", logger);
+        builder.registerInstance("translate", t);
+        builder.registerInstance("logger", logger);
 
         builder.register(DatabaseService);
         builder.register(UserRepository);
