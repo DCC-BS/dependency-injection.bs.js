@@ -24,7 +24,7 @@ export class ServiceProvider
             throw new Error(`Service ${key} not registered`);
         }
 
-        return factory.build(args);
+        return factory.build(...args);
     }
 
     public resolveAsync<T>(target: InjectKey<T>, ...args: any[]): Promise<T> {

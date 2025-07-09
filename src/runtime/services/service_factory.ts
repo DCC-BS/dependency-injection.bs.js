@@ -6,8 +6,6 @@ export interface IServiceFactory<T> {
 }
 
 export class ServiceFactory<T> {
-    private instance: T | undefined;
-
     constructor(
         private readonly key: string,
         private readonly node: DependencyNode<T>,
@@ -17,10 +15,6 @@ export class ServiceFactory<T> {
     public build(...args: any[]) {
         if (this.node.instance) {
             return this.node.instance as T;
-        }
-
-        if (this.instance) {
-            return this.instance;
         }
 
         if (!this.node.serviceType) {
