@@ -46,7 +46,7 @@
         "changelogen": "^0.6.2",
         "nuxt": "^4.0.2",
         "publish-to-git": "^1.2.0",
-        "typescript": "~5.8.3",
+        "typescript": "~5.9.0",
         "vitest": "^3.2.4",
         "vue-tsc": "^3.0.4",
         "happy-dom": "^18.0.1",
