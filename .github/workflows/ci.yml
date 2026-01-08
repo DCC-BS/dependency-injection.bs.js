@@ -1,33 +1,21 @@
 name: Build & Test
-
 on:
-  push:
-    branches:
-        - main
-  pull_request:
-    branches:
-        - main
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+    ci:
+        uses: DCC-BS/ci-workflows/.github/workflows/frontend-ci.yml@v6
         with:
-          node-version: "24.x"
-          registry-url: "https://npm.pkg.github.com"
-      - name: Install Bun
-        run: npm install -g bun
-      - run: bun install
-      - run: bun generate
-      - run: bun run test --coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+            node_version: "24.x"
+            working_directory: "."
+            run_biome: true
+            run_playwright: false
+            install_method: "bun" # 'bun' | 'npm' | 'pnpm' | 'yarn'
+            install_command: "bun install" # optional override; default per install_method
+            build_command: "bun generate"
+            test_command: ""
+            artifact_name: "playwright-report"
+            artifact_retention_days: 30
