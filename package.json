@@ -4,9 +4,6 @@
     "description": "A lightweight, type-safe dependency injection system for JavaScript/TypeScript applications, with built-in support for Nuxt.js.",
     "license": "MIT",
     "type": "module",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
-    },
     "exports": {
         ".": {
             "types": "./dist/types.d.mts",
@@ -19,6 +16,9 @@
     "files": [
         "dist"
     ],
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "prepack": "nuxt-module-build build",
         "generate": "nuxi generate",
