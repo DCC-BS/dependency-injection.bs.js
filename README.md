@@ -1,10 +1,10 @@
 # Dependency Injection
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/DCC-BS/dependency-injection.bs.js)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/DCC-BS/dependency-injection.bs.js/publish.yml)
-[![codecov](https://codecov.io/gh/DCC-BS/dependency-injection.bs.js/graph/badge.svg?token=3PBNL8OR24)](https://codecov.io/gh/DCC-BS/dependency-injection.bs.js)
-
 A lightweight, type-safe dependency injection system for JavaScript/TypeScript applications, with built-in support for Nuxt.js.
+
+![GitHub License](https://img.shields.io/github/license/DCC-BS/dependency-injection.bs.js)
+[![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev)
+[![NPM Version](https://img.shields.io/npm/v/%40dcc-bs%2Fdependency-injection.bs.js)](https://www.npmjs.com/package/@dcc-bs/dependency-injection.bs.js)
 
 ## Features
 

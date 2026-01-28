@@ -1,8 +1,8 @@
-import type { DependencyNode, ServiceLifetime } from "./dependency_node";
+import type { DependencyNode } from "./dependency_node";
 import type { ServiceType } from "./service_provider";
 
 export interface IServiceFactory<T> {
-    build(...args: any[]): T;
+    build(...args: unknown[]): T;
 }
 
 export class ServiceFactory<T> {
@@ -12,7 +12,7 @@ export class ServiceFactory<T> {
         private readonly injectedFactories: IServiceFactory<unknown>[],
     ) {}
 
-    public build(...args: any[]) {
+    public build(...args: unknow[]) {
         if (this.node.instance) {
             return this.node.instance as T;
         }

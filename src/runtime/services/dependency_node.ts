@@ -1,4 +1,3 @@
-import type { IServiceFactory } from "./service_factory";
 import type { ServiceType } from "./service_provider";
 
 export type ServiceLifetime = "singleton" | "transient";

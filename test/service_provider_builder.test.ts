@@ -8,7 +8,6 @@ class ServiceA {
     static $injectKey = "serviceA";
     static $inject: string[] = [];
 
-    // biome-ignore lint/complexity/noUselessConstructor: <explanation>
     constructor() {}
 }
 
