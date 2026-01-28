@@ -8,8 +8,11 @@ export class ServiceA {
 export class ServiceB {
     static $injectKey = "ServiceB";
     static $inject = [ServiceA];
-    
-    constructor(public readonly serviceA: ServiceA, public readonly appConfig: AppConfig) {
+
+    constructor(
+        public readonly serviceA: ServiceA,
+        public readonly appConfig: AppConfig,
+    ) {
         console.log("ServiceB initialized with ServiceA", serviceA, appConfig);
     }
 }
@@ -24,6 +27,10 @@ export class ServiceC {
     static $injectKey = "ServiceC";
     static $inject = [ServiceA, ServiceB];
     constructor(serviceA: ServiceA, serviceB: ServiceB) {
-        console.log("ServiceC initialized with ServiceA and ServiceB", serviceA, serviceB);
+        console.log(
+            "ServiceC initialized with ServiceA and ServiceB",
+            serviceA,
+            serviceB,
+        );
     }
 }

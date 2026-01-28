@@ -2,21 +2,21 @@ import { getKeyName, type InjectKey } from "../helpers/helpers";
 import type { IServiceFactory } from "./service_factory";
 
 export interface ServiceType<T> {
-    new (...args: any[]): T;
+    new (...args: unknown[]): T;
     $injectKey: string;
     $inject: (string | ServiceType<unknown>)[];
 }
 
 export interface IServiceProvider {
-    resolve<T>(target: InjectKey<T>, ...args: any[]): T;
-    resolveAsync<T>(target: InjectKey<T>, ...args: any[]): Promise<T>;
+    resolve<T>(target: InjectKey<T>, ...args: unknow[]): T;
+    resolveAsync<T>(target: InjectKey<T>, ...args: unknow[]): Promise<T>;
 }
 
 export class ServiceProvider
     extends Map<string, IServiceFactory<unknown>>
     implements IServiceProvider
 {
-    public resolve<T>(target: InjectKey<T>, ...args: any[]): T {
+    public resolve<T>(target: InjectKey<T>, ...args: unknow[]): T {
         const key = getKeyName(target);
 
         const factory = this.get(key) as IServiceFactory<T>;
@@ -27,7 +27,10 @@ export class ServiceProvider
         return factory.build(...args);
     }
 
-    public resolveAsync<T>(target: InjectKey<T>, ...args: any[]): Promise<T> {
+    public resolveAsync<T>(
+        target: InjectKey<T>,
+        ...args: unknow[]
+    ): Promise<T> {
         const key = getKeyName(target);
 
         const factory = this.get(key) as IServiceFactory<Promise<T>>;
