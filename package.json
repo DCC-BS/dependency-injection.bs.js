@@ -45,7 +45,7 @@
         "@vitest/coverage-v8": "4.0.18",
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
-        "happy-dom": "20.5.0",
+        "happy-dom": "20.5.3",
         "nuxt": "4.3.1",
         "publish-to-git": "^1.2.0",
         "typescript": "5.9.3",
