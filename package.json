@@ -36,7 +36,7 @@
         "@nuxt/kit": "4.4.2"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.4.11",
+        "@biomejs/biome": "2.4.12",
         "@nuxt/devtools": "3.2.4",
         "@nuxt/module-builder": "^1.0.2",
         "@nuxt/schema": "4.4.2",
