@@ -41,7 +41,7 @@
         "@nuxt/module-builder": "^1.0.2",
         "@nuxt/schema": "4.4.6",
         "@nuxt/test-utils": "4.0.3",
-        "@types/node": "25.9.0",
+        "@types/node": "25.9.1",
         "@vitest/coverage-v8": "4.1.6",
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
