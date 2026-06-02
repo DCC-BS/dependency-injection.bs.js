@@ -51,6 +51,6 @@
         "typescript": "5.9.3",
         "vitest": "4.1.6",
         "vitest-environment-nuxt": "^1.0.1",
-        "vue-tsc": "3.2.9"
+        "vue-tsc": "3.3.0"
     }
 }
