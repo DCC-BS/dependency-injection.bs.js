@@ -42,14 +42,14 @@
         "@nuxt/schema": "4.4.8",
         "@nuxt/test-utils": "4.0.3",
         "@types/node": "25.9.4",
-        "@vitest/coverage-v8": "4.1.9",
+        "@vitest/coverage-v8": "4.1.10",
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
         "happy-dom": "20.10.6",
         "nuxt": "4.4.8",
         "publish-to-git": "^1.2.0",
         "typescript": "5.9.3",
-        "vitest": "4.1.9",
+        "vitest": "4.1.10",
         "vitest-environment-nuxt": "^1.0.1",
         "vue-tsc": "3.3.6"
     }
