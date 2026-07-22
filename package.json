@@ -48,7 +48,7 @@
         "happy-dom": "20.10.6",
         "nuxt": "4.4.8",
         "publish-to-git": "^1.2.0",
-        "typescript": "5.9.3",
+        "typescript": "7.0.2",
         "vitest": "4.1.10",
         "vitest-environment-nuxt": "^1.0.1",
         "vue-tsc": "3.3.7"
