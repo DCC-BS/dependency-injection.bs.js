@@ -40,7 +40,7 @@
         "@nuxt/devtools": "3.3.1",
         "@nuxt/module-builder": "^1.0.2",
         "@nuxt/schema": "4.5.1",
-        "@nuxt/test-utils": "4.0.3",
+        "@nuxt/test-utils": "4.1.0",
         "@types/node": "25.9.5",
         "@vitest/coverage-v8": "4.1.10",
         "@vue/test-utils": "^2.4.6",
