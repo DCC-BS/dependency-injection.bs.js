@@ -33,20 +33,20 @@
         "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
-        "@nuxt/kit": "4.5.2"
+        "@nuxt/kit": "4.6.0"
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.15",
         "@nuxt/devtools": "3.4.2",
         "@nuxt/module-builder": "^1.0.2",
-        "@nuxt/schema": "4.5.2",
+        "@nuxt/schema": "4.6.0",
         "@nuxt/test-utils": "4.3.3",
         "@types/node": "25.9.9",
         "@vitest/coverage-v8": "4.1.11",
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
         "happy-dom": "20.14.5",
-        "nuxt": "4.5.2",
+        "nuxt": "4.6.0",
         "publish-to-git": "^1.2.0",
         "typescript": "5.9.3",
         "vitest": "4.1.11",
