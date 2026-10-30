@@ -36,13 +36,13 @@
         "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
-        "@nuxt/kit": "4.6.1"
+        "@nuxt/kit": "4.6.2"
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.15",
         "@nuxt/devtools": "3.4.3",
         "@nuxt/module-builder": "^1.0.2",
-        "@nuxt/schema": "4.6.1",
+        "@nuxt/schema": "4.6.2",
         "@nuxt/test-utils": "4.3.3",
         "@types/node": "26.6.5",
         "@vitest/coverage-v8": "5.0.5",
