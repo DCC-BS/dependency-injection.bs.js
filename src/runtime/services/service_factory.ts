@@ -12,7 +12,7 @@ export class ServiceFactory<T> {
         private readonly injectedFactories: IServiceFactory<unknown>[],
     ) {}
 
-    public build(...args: unknow[]) {
+    public build(...args: unknown[]) {
         if (this.node.instance) {
             return this.node.instance as T;
         }
@@ -31,12 +31,13 @@ export class ServiceFactory<T> {
             const factoryType = this.node.serviceType as ServiceType<
                 IServiceFactory<T>
             >;
-            const factory = new factoryType(...resovledServices);
+            // Constructor parameters are typed per service; the resolved values are only known at runtime.
+            const factory = new factoryType(...(resovledServices as never[]));
 
             instance = factory.build(...args);
         } else {
             instance = new this.node.serviceType(
-                ...[...resovledServices, ...args],
+                ...([...resovledServices, ...args] as never[]),
             ) as T;
         }
 

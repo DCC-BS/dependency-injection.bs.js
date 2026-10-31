@@ -2,7 +2,7 @@ import { useNuxtApp } from "nuxt/app";
 import type { ServiceOrchestrator } from "../services/service_orchestrator";
 import type { ServiceType } from "../services/service_provider";
 
-export function useService<T>(target: ServiceType<T>, ...args: unknow[]): T {
+export function useService<T>(target: ServiceType<T>, ...args: unknown[]): T {
     const nuxtApp = useNuxtApp();
     const serviceOrchestrator =
         nuxtApp.$serviceOrchestrator as ServiceOrchestrator;
@@ -13,7 +13,7 @@ export function useService<T>(target: ServiceType<T>, ...args: unknow[]): T {
 
 export async function useServiceAsync<T>(
     target: ServiceType<T>,
-    ...args: unknow[]
+    ...args: unknown[]
 ): Promise<T> {
     const nuxtApp = useNuxtApp();
     const serviceOrchestrator =
