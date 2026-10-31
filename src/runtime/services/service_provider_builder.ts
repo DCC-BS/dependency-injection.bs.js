@@ -29,7 +29,7 @@ export interface IServiceProviderBuilder {
      * @param key Unique key for the service
      */
     registerFactory<T>(
-        factory: (...args: unknown[]) => T,
+        factory: (...args: never[]) => T,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
     ): void;
@@ -41,7 +41,7 @@ export interface IServiceProviderBuilder {
      * @param key Unique key for the service
      * */
     registerAsyncFactory<T>(
-        factory: (...args: unknown[]) => Promise<T>,
+        factory: (...args: never[]) => Promise<T>,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
     ): void;
@@ -133,7 +133,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
     }
 
     public registerFactory<T>(
-        factory: (...args: unknown[]) => T,
+        factory: (...args: never[]) => T,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
         lifetime: ServiceLifetime = "singleton",
@@ -156,7 +156,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             }
 
             build(...args: unknown[]): T {
-                return factory(...[...this.args, ...args]);
+                return factory(...([...this.args, ...args] as never[]));
             }
         };
 
@@ -174,7 +174,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
     }
 
     public registerAsyncFactory<T>(
-        factory: (...args: unknown[]) => Promise<T>,
+        factory: (...args: never[]) => Promise<T>,
         inject: InjectKey<unknown>[],
         key: InjectKey<T>,
         lifetime: ServiceLifetime = "singleton",
@@ -194,7 +194,7 @@ export class ServiceProviderBuilder implements IServiceProviderBuilder {
             }
 
             async build(...args: unknown[]): Promise<T> {
-                return factory(...[...this.args, ...args]);
+                return factory(...([...this.args, ...args] as never[]));
             }
         };
         // Create a dependency node for the factory
