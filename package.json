@@ -1,7 +1,10 @@
 {
     "name": "@dcc-bs/dependency-injection.bs.js",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "description": "A lightweight, type-safe dependency injection system for JavaScript/TypeScript applications, with built-in support for Nuxt.js.",
+    "repository": {
+        "url": "https://github.com/DCC-BS/dependency-injection.bs.js"
+    },
     "license": "MIT",
     "type": "module",
     "exports": {
@@ -33,23 +36,23 @@
         "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
-        "@nuxt/kit": "4.6.1"
+        "@nuxt/kit": "4.6.2"
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.15",
-        "@nuxt/devtools": "3.4.2",
+        "@nuxt/devtools": "3.4.3",
         "@nuxt/module-builder": "^1.0.2",
-        "@nuxt/schema": "4.6.1",
-        "@nuxt/test-utils": "4.3.3",
+        "@nuxt/schema": "4.6.2",
+        "@nuxt/test-utils": "4.3.4",
         "@types/node": "26.6.5",
-        "@vitest/coverage-v8": "5.0.4",
+        "@vitest/coverage-v8": "5.0.5",
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
         "happy-dom": "21.0.4",
         "nuxt": "4.6.2",
         "publish-to-git": "^1.2.0",
         "typescript": "5.9.3",
-        "vitest": "5.0.4",
+        "vitest": "5.0.5",
         "vitest-environment-nuxt": "^2.0.0",
         "vue-tsc": "3.3.13"
     }
