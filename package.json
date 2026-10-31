@@ -49,7 +49,7 @@
         "@vue/test-utils": "^2.4.6",
         "changelogen": "^0.6.2",
         "happy-dom": "20.14.6",
-        "nuxt": "4.6.2",
+        "nuxt": "4.6.3",
         "typescript": "5.9.3",
         "vitest": "5.0.5",
         "vitest-environment-nuxt": "^2.0.0",
