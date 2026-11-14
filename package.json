@@ -42,7 +42,7 @@
         "@biomejs/biome": "2.6.4",
         "@nuxt/devtools": "3.4.4",
         "@nuxt/module-builder": "^1.0.2",
-        "@nuxt/schema": "4.6.3",
+        "@nuxt/schema": "4.6.4",
         "@nuxt/test-utils": "4.3.4",
         "@types/node": "26.6.5",
         "@vitest/coverage-v8": "5.0.5",
