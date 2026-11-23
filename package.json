@@ -43,7 +43,7 @@
         "@nuxt/devtools": "4.1.0",
         "@nuxt/module-builder": "^1.0.2",
         "@nuxt/schema": "4.6.4",
-        "@nuxt/test-utils": "4.3.4",
+        "@nuxt/test-utils": "4.4.0",
         "@types/node": "26.6.5",
         "@vitest/coverage-v8": "5.1.0",
         "@vue/test-utils": "^2.4.6",
